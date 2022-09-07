@@ -92,22 +92,33 @@ class PaymentCategory(db.Model):
     updated_at = Column(DateTime(timezone=True), default=func.now())
 
 
+class SchoolLevel(db.Model):
+    __tablename__ = "school_levels"
+    id = Column('id', Integer, primary_key=True)
+    name = Column(String(20), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=func.now())
+    updated_at = Column(DateTime(timezone=True), default=func.now())
+
+# ! School Management App
+
+
 class User(db.Model):
     __tablename__ = "users"
     id = Column('id', Integer, primary_key=True)
     username = Column(String(20), nullable=True, unique=False)
     email = Column(String(128), unique=True, nullable=True)
+    name = Column(String(128), unique=True, nullable=True)
     first_name = Column(String(50), unique=False, nullable=True)
     last_name = Column(String(50), unique=False, nullable=True)
     birth_date = Column(String(10), unique=False, nullable=False)
     phone = Column(String(20), nullable=True, unique=True)
-    is_admin = Column(Boolean(), default=False)
+    is_school = Column(Boolean(), default=False)
     is_parent = Column(Boolean(), default=False)
     is_employee = Column(Boolean(), default=False)
     status = Column(Boolean(), default=False)
+    is_active = Column(Boolean(), default=False)
     language = Column(Integer, ForeignKey("languages.id"), nullable=True)
     password = Column(Text(), nullable=True)
-    status = Column(Boolean(), default=False)
     created_at = Column(DateTime(timezone=True), default=func.now())
     updated_at = Column(DateTime(timezone=True), default=func.now())
     confirmed = Column(Boolean(), nullable=False, default=False)
@@ -139,6 +150,13 @@ class User(db.Model):
         return sha256.verify(password, hash)
 
 
+class SchoolLevelOrganize(db.Model):
+    __tablename__ = "school_level_organize"
+    id = Column('id', Integer, primary_key=True)
+    school_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    level_id = Column(Integer, ForeignKey('school_levels.id'), nullable=False)
+
+
 class UserProfile(db.Model):
     __tablename__ = "user_profile"
     id = Column('id', Integer, primary_key=True)
@@ -147,6 +165,7 @@ class UserProfile(db.Model):
     country = Column(Integer, ForeignKey("country.id"), nullable=True)
     state = Column(Integer, ForeignKey('state.id'), nullable=True)
     city = Column(Integer, ForeignKey('cities.id'), nullable=True)
+    street = Column(String(100), unique=False, nullable=True)
     picture = Column(Text(), nullable=True)
     created_at = Column(DateTime(timezone=True), default=func.now())
     updated_at = Column(DateTime(timezone=True), default=func.now())
@@ -228,40 +247,15 @@ class StudentParent(db.Model):
     father_full_name = Column(String(500), nullable=True)
     mother_full_name = Column(String(500), nullable=True)
     email = Column(String(200), nullable=True)
+    phone = Column(String(50), nullable=True)
+
     created_at = deleted_at = Column(
         DateTime(timezone=True), default=func.now())
     updated_at = deleted_at = Column(
         DateTime(timezone=True), default=func.now())
 
 
-class BussSubscription(db.Model):
-    __tablename__ = "buss_subscription"
-    id = Column('id', Integer, primary_key=True)
-    school_id = Column(Integer, ForeignKey('users.id'), nullable=False)
-    student_id = Column(Integer, ForeignKey('students.id'), nullable=True)
-    left_at = Column(DateTime(timezone=True))
-    created_at = deleted_at = Column(
-        DateTime(timezone=True), default=func.now())
-    updated_at = deleted_at = Column(
-        DateTime(timezone=True), default=func.now())
-
-
-class BussAttendance(db.Model):
-    __tablename__ = "buss_attendance"
-    id = Column('id', Integer, primary_key=True)
-    student_scr_id = Column(Integer, ForeignKey(
-        'buss_attendance.id'), nullable=False)
-    driver_id = Column(Integer, ForeignKey('users.id'), nullable=False)
-    picked = Column(Boolean(), default=False)
-    arrived = Column(Boolean(), default=False)
-    picked_at = deleted_at = Column(
-        DateTime(timezone=True), default=func.now())
-    arrived_at = deleted_at = Column(
-        DateTime(timezone=True), default=func.now())
-    created_at = deleted_at = Column(
-        DateTime(timezone=True), default=func.now())
-    updated_at = deleted_at = Column(
-        DateTime(timezone=True), default=func.now())
+'''This section provide all types of payment for those tree App'''
 
 
 class StudentPayment(db.Model):
@@ -375,3 +369,109 @@ class CashReport(db.Model):
         DateTime(timezone=True), default=func.now())
     updated_at = deleted_at = Column(
         DateTime(timezone=True), default=func.now())
+
+
+'''
+Parents can add his/her kid to their account to track his/her activities
+by selecting the student from school list:
+- student name
+- class 
+
+There will be some security question to be asked before accepting the connection like
+- Student Age, birth date, class and place of birth
+and after three attempt then block the page of search
+
+'''
+
+
+class ParentAddStudentSchool(db.Model):
+    __tablename__ = "parent_add_student_school"
+    id = Column('id', Integer, primary_key=True)
+    parent_id = Column(Integer, ForeignKey('students.id'), nullable=False)
+    school_id = Column(Integer, ForeignKey('users.id'), nullable=True)
+    student_id = Column(Integer, ForeignKey('students.id'), nullable=True)
+    added_on = deleted_at = Column(
+        DateTime(timezone=True), default=func.now())
+    updated_at = deleted_at = Column(
+        DateTime(timezone=True), default=func.now())
+
+# ! Buss tracking App
+
+
+class BussSubscription(db.Model):
+    __tablename__ = "buss_subscription"
+    id = Column('id', Integer, primary_key=True)
+    school_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    student_id = Column(Integer, ForeignKey('students.id'), nullable=True)
+    left_at = Column(DateTime(timezone=True))
+    created_at = deleted_at = Column(
+        DateTime(timezone=True), default=func.now())
+    updated_at = deleted_at = Column(
+        DateTime(timezone=True), default=func.now())
+
+
+class BussAttendance(db.Model):
+    __tablename__ = "buss_attendance"
+    id = Column('id', Integer, primary_key=True)
+    '''Pick driver ID'''
+    driver_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    student_scr_id = Column(Integer, ForeignKey(
+        'buss_attendance.id'), nullable=False)
+    driver_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    picked = Column(Boolean(), default=False)
+    arrived = Column(Boolean(), default=False)
+    picked_at = deleted_at = Column(
+        DateTime(timezone=True), default=func.now())
+    arrived_at = deleted_at = Column(
+        DateTime(timezone=True), default=func.now())
+    created_at = deleted_at = Column(
+        DateTime(timezone=True), default=func.now())
+    updated_at = deleted_at = Column(
+        DateTime(timezone=True), default=func.now())
+
+
+# ! Follow up your kids App
+'''
+    This section will  be like a chat system between parent and nursery school teach.
+    select student to bring to parent chat 
+'''
+
+
+class ParentFollowUpChat(db.Model):
+    __tablename__ = "parent_follow_up_chat"
+    id = Column('id', Integer, primary_key=True)
+    teacher_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    parent_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    started_at = deleted_at = Column(
+        DateTime(timezone=True), default=func.now())
+    ended_at = deleted_at = Column(
+        DateTime(timezone=True), default=func.now())
+    updated_at = deleted_at = Column(
+        DateTime(timezone=True), default=func.now())
+
+
+class ChatMessageContent(db.Model):
+    __tablename__ = "chat_message_content"
+    id = Column('id', Integer, primary_key=True)
+    message = Column(Text(), nullable=True)
+    saved_at = deleted_at = Column(
+        DateTime(timezone=True), default=func.now())
+    status = Column(Boolean(), default=False)
+
+
+class ChatVideoContent(db.Model):
+    __tablename__ = "chat_video_content"
+    id = Column('id', Integer, primary_key=True)
+    video = Column(Text(), nullable=True)
+    saved_at = deleted_at = Column(
+        DateTime(timezone=True), default=func.now())
+    status = Column(Boolean(), default=False)
+
+
+class ChatImageContent(db.Model):
+    __tablename__ = "chat_image_content"
+    id = Column('id', Integer, primary_key=True)
+    image = Column(Text(), nullable=True)
+    saved_at = deleted_at = Column(
+        DateTime(timezone=True), default=func.now())
+    status = Column(Boolean(), default=False)
