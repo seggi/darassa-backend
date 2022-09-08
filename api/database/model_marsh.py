@@ -1,4 +1,3 @@
-from sre_parse import State
 from marshmallow import fields
 
 from .. import db
@@ -8,7 +7,7 @@ from .models import (
     BussAttendance, BussSubscription,
     CashReport, ChatImageContent, ChatMessageContent,
     ChatVideoContent, Cities, ClassModules,
-    Classes, Country, Currency,
+    Classes, Country, Currency, State,
     EmployeePayment, EmployeeSalary,
     FeeType, Gender, Language, MarksEvaluation,
     ParentAddStudentSchool, ParentFollowUpChat,
