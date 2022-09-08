@@ -125,8 +125,6 @@ class User(db.Model):
     confirmed_on = Column(DateTime(timezone=True),
                           default=func.now(), nullable=True)
     profile = db.relationship("UserProfile", backref="user", lazy=True)
-    expense = db.relationship(
-        "Expenses", backref=backref("users", lazy="joined"))
 
     def create(self):
         db.session.add(self)
@@ -192,7 +190,6 @@ class Classes(db.Model):
     school_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     created_at = Column(DateTime(timezone=True), default=func.now())
     updated_at = Column(DateTime(timezone=True), default=func.now())
-    deleted_at = Column(DateTime(timezone=True), default=func.now())
 
 
 class ClassModules(db.Model):
@@ -224,6 +221,7 @@ class Students(db.Model):
         DateTime(timezone=True), default=func.now())
     updated_at = deleted_at = Column(
         DateTime(timezone=True), default=func.now())
+    deleted_at = Column(DateTime(timezone=True))
 
 
 class StudentAddress(db.Model):
@@ -238,6 +236,7 @@ class StudentAddress(db.Model):
         DateTime(timezone=True), default=func.now())
     updated_at = deleted_at = Column(
         DateTime(timezone=True), default=func.now())
+    deleted_at = Column(DateTime(timezone=True))
 
 
 class StudentParent(db.Model):
@@ -253,6 +252,7 @@ class StudentParent(db.Model):
         DateTime(timezone=True), default=func.now())
     updated_at = deleted_at = Column(
         DateTime(timezone=True), default=func.now())
+    deleted_at = Column(DateTime(timezone=True))
 
 
 '''This section provide all types of payment for those tree App'''
@@ -272,6 +272,7 @@ class StudentPayment(db.Model):
         DateTime(timezone=True), default=func.now())
     updated_at = deleted_at = Column(
         DateTime(timezone=True), default=func.now())
+    deleted_at = Column(DateTime(timezone=True))
 
 
 class StudentLevel(db.Model):
@@ -285,6 +286,7 @@ class StudentLevel(db.Model):
         DateTime(timezone=True), default=func.now())
     updated_at = deleted_at = Column(
         DateTime(timezone=True), default=func.now())
+    deleted_at = Column(DateTime(timezone=True))
 
 
 class MarksEvaluation(db.Model):
@@ -300,6 +302,7 @@ class MarksEvaluation(db.Model):
         DateTime(timezone=True), default=func.now())
     updated_at = deleted_at = Column(
         DateTime(timezone=True), default=func.now())
+    deleted_at = Column(DateTime(timezone=True))
 
 
 class TeacherClasses(db.Model):
@@ -311,6 +314,7 @@ class TeacherClasses(db.Model):
         DateTime(timezone=True), default=func.now())
     updated_at = deleted_at = Column(
         DateTime(timezone=True), default=func.now())
+    deleted_at = Column(DateTime(timezone=True))
 
 
 class TeacherModules(db.Model):
@@ -324,6 +328,7 @@ class TeacherModules(db.Model):
         DateTime(timezone=True), default=func.now())
     updated_at = deleted_at = Column(
         DateTime(timezone=True), default=func.now())
+    deleted_at = Column(DateTime(timezone=True))
 
 
 class EmployeeSalary(db.Model):
@@ -339,6 +344,7 @@ class EmployeeSalary(db.Model):
         DateTime(timezone=True), default=func.now())
     updated_at = deleted_at = Column(
         DateTime(timezone=True), default=func.now())
+    deleted_at = Column(DateTime(timezone=True))
 
 
 class EmployeePayment(db.Model):
@@ -354,6 +360,7 @@ class EmployeePayment(db.Model):
         DateTime(timezone=True), default=func.now())
     updated_at = deleted_at = Column(
         DateTime(timezone=True), default=func.now())
+    deleted_at = Column(DateTime(timezone=True))
 
 
 class CashReport(db.Model):
@@ -369,6 +376,7 @@ class CashReport(db.Model):
         DateTime(timezone=True), default=func.now())
     updated_at = deleted_at = Column(
         DateTime(timezone=True), default=func.now())
+    deleted_at = Column(DateTime(timezone=True))
 
 
 '''
@@ -394,6 +402,8 @@ class ParentAddStudentSchool(db.Model):
         DateTime(timezone=True), default=func.now())
     updated_at = deleted_at = Column(
         DateTime(timezone=True), default=func.now())
+    deleted_at = Column(DateTime(timezone=True))
+
 
 # ! Buss tracking App
 
@@ -408,6 +418,7 @@ class BussSubscription(db.Model):
         DateTime(timezone=True), default=func.now())
     updated_at = deleted_at = Column(
         DateTime(timezone=True), default=func.now())
+    deleted_at = Column(DateTime(timezone=True))
 
 
 class BussAttendance(db.Model):
@@ -428,6 +439,7 @@ class BussAttendance(db.Model):
         DateTime(timezone=True), default=func.now())
     updated_at = deleted_at = Column(
         DateTime(timezone=True), default=func.now())
+    deleted_at = Column(DateTime(timezone=True))
 
 
 # ! Follow up your kids App
@@ -448,6 +460,7 @@ class ParentFollowUpChat(db.Model):
         DateTime(timezone=True), default=func.now())
     updated_at = deleted_at = Column(
         DateTime(timezone=True), default=func.now())
+    deleted_at = Column(DateTime(timezone=True))
 
 
 class ChatMessageContent(db.Model):

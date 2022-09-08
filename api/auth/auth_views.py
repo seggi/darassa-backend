@@ -15,7 +15,7 @@ auth = Blueprint("auth", __name__, url_prefix="/api/user")
 user_schema = UserSchema()
 
 
-@auth.get('/signup')
+@auth.post('/signup')
 def login():
     try:
         data = {
@@ -26,7 +26,6 @@ def login():
             "is_parent": request.json['is_parent'],
             "is_employee": request.json["is_employee"],
             "username": request.json["username"],
-            "birth_date": request.json["birth_date"],
             "password": request.json["password"]
         }
 
@@ -37,7 +36,6 @@ def login():
 
         data['password'] = User.generate_hash(data['password'])
 
-        user_schema = user_schema()
         user_data = user_schema.load(data, partial=True)
         token = generate_verification_token(data['email'])
 
@@ -67,7 +65,8 @@ def login():
 
         return response_with(resp.SUCCESS_200)
 
-    except Exception:
+    except Exception as e:
+        print(e)
         return response_with(resp.INVALID_INPUT_422)
 
 # Verification token

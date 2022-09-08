@@ -9,7 +9,7 @@ services:
     volumes:
       - .:/usr/src/app/
     ports:
-      - 4000:4000
+      - 5000:5000
     env_file:
       - ./.env
     depends_on:
