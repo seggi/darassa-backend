@@ -4,6 +4,7 @@
         "DARASSA",
         "jsonify",
         "passlib",
+        "sqla",
         "sqlalchemy",
         "werkzeug"
     ]

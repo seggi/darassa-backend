@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify, url_for, render_template_string
+from api.database.model_marsh import UserSchema
 from api.database.models import User
 from api.utils.email import send_email
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
