@@ -110,7 +110,7 @@ class User(db.Model):
     name = Column(String(128), unique=True, nullable=True)
     first_name = Column(String(50), unique=False, nullable=True)
     last_name = Column(String(50), unique=False, nullable=True)
-    birth_date = Column(String(10), unique=False, nullable=False)
+    birth_date = Column(String(10), unique=False, nullable=True)
     phone = Column(String(20), nullable=True, unique=True)
     is_school = Column(Boolean(), default=False)
     is_parent = Column(Boolean(), default=False)

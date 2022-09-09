@@ -1,9 +1,11 @@
-from flask_mail import Message 
-from flask import current_app 
+from flask_mail import Message
+from flask import current_app
 
 from .. import mail
 
-# Define send method 
+# Define send method
+
+
 def send_email(to, subject, template):
     msg = Message(
         subject=subject,
