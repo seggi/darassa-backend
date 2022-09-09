@@ -1,14 +1,19 @@
+from ..utils.sms.sms import send_bulk_sms
+from ..utils.sms.response import response, error_response
+from ..utils.sms.request import validate_body
+from api.utils.token import confirm_verification_token, generate_verification_token
+from api.utils import responses as resp
+from api.utils.responses import response_with
+
+from .. import db
 from flask import Blueprint, request, jsonify, url_for, render_template_string
+from dotenv import load_dotenv
 from api.database.model_marsh import UserSchema
 from api.database.models import User
 from api.utils.email import send_email
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
 
-
-from .. import db
-from api.utils.responses import response_with
-from api.utils import responses as resp
-from api.utils.token import confirm_verification_token, generate_verification_token
+load_dotenv()
 
 auth = Blueprint("auth", __name__, url_prefix="/api/user")
 
@@ -39,6 +44,8 @@ def login():
         user_data = user_schema.load(data, partial=True)
         token = generate_verification_token(data['email'])
 
+        # Send Email
+
         verification_email = url_for(
             'auth.verify_email', token=token, _external=True)
 
@@ -47,22 +54,25 @@ def login():
             <div>
                 <h2>Welcome to  DARASSA</h2>
                 <p>
-                    Thank you for sign up to our app. 
+                    Thank you for sign up to our app.
                     Please click the button below to activate your account:
                 </p>
                 <p>
-                    <a href='{{ verification_email }}' 
+                    <a href='{{ verification_email }}'
                         style='padding: 8px; background: blue; width: 20px; color: white; text-decoration: none;'>Confirm Signup</a>
                 </p>
                 <br/>
-                <p> Thanks!</p>  
+                <p> Thanks!</p>
             </div>
             """, verification_email=verification_email)
 
         subject = "Please Verify your email"
         send_email(user_data.email, subject, html)
-        user_data.create()
 
+        # Send SMS
+        message = "Thank you for sign up to DARASSA APP"
+        send_bulk_sms(data['phone'], message)
+        user_data.create()
         return response_with(resp.SUCCESS_200)
 
     except Exception as e:
@@ -91,7 +101,6 @@ def verify_email(token):
 
 
 # Refresh token
-
 
 @auth.route("/refresh", methods=["POST"])
 @jwt_required(refresh=True)
