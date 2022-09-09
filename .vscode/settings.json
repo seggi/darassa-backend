@@ -2,6 +2,7 @@
     "cSpell.words": [
         "backref",
         "DARASSA",
+        "dotenv",
         "jsonify",
         "passlib",
         "sqla",
