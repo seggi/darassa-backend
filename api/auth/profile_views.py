@@ -1,6 +1,7 @@
 from flask import jsonify, Blueprint
 from flask import request
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from api.database.model_marsh import UserSchema
 
 from api.database.models import User, UserProfile
 
@@ -10,44 +11,45 @@ from api.utils import responses as resp
 
 
 profile_view = Blueprint("profile_view", __name__,
-                         url_prefix="/api/user/profile")
+                         url_prefix="/api/user")
+
+user_schema = UserSchema()
 
 
-@profile_view.post('/complete-profile')
+@profile_view.post('/profile')
 @jwt_required()
 def user_complete_profile():
     user_id = get_jwt_identity()['id']
-    data = {
-        "users": {
-            "id": user_id,
-            "first_name": request.json["first_name"],
-            "last_name": request.json["last_name"],
-            "country": request.json["phone"],
-            "city": request.json["city"],
-            "state": request.json["state"],
-            "street": request.json["street"],
-            "picture": request.json["picture"],
-            "status": request.json["status"],
-        },
-        "user_profile": {
-            "user_id": user_id,
-            "gender":  request.json["gender"],
-        }
-    }
-
-    if data["users"]['first_name'] is None or data["users"]['last_name'] is None or data["users"]['phone'] is None\
-            or data["user_profile"]['gender'] is None:
+    try:
+        request_data = request.json
+        user = User.query.filter_by(id=user_id).first()
+        if user:
+            user_info = user_schema.dump(user)
+            if user_info['is_school'] == True:
+                if request_data['name'] is None or request_data["username"] is None or request_data['picture'] is None:
+                    return response_with(resp.INVALID_INPUT_422)
+                update_user = {
+                    "name": request_data['name'],
+                    "username": request_data['username'],
+                }
+                save_profile = {
+                    "user_id": user_id,
+                    "picture": request_data['picture'],
+                    "country": request_data['country'],
+                    "state": request_data['state'],
+                    "city": request_data['city'],
+                    "street": request_data['street']
+                }
+                User.query.filter_by(id=user_id).update(update_user)
+                new_user_info = UserProfile(**save_profile)
+                db.session.add(new_user_info)
+                db.session.commit()
+            return jsonify({
+                "code": "success",
+                "message": "Profile saved successfully. Now you can start your operation!"
+            })
+        else:
+            return response_with(resp.UNAUTHORIZED_403)
+    except Exception as e:
+        print(e)
         return response_with(resp.INVALID_INPUT_422)
-
-    user = User.query.filter_by(id=data["users"]['id']).first()
-    if user:
-        User.query.filter_by(id=data["users"]['id']).update(data["users"])
-        user_id = UserProfile(**data["user_profile"])
-        db.session.add(user_id)
-        db.session.commit()
-        return jsonify({
-            "code": "success",
-            "message": "Profile saved successfully. Now you can start your operation!"
-        })
-    else:
-        return response_with(resp.UNAUTHORIZED_403)
