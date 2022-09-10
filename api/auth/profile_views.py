@@ -55,7 +55,6 @@ def user_update_profile():
         else:
             return response_with(resp.UNAUTHORIZED_403)
     except Exception as e:
-        print(e)
         return response_with(resp.INVALID_INPUT_422)
 
 
@@ -89,7 +88,7 @@ def upload_profile_image():
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         path_name = {'user_id': user_id,
-                     'picture': f'{UPLOAD_FOLDER}/{user_id}/{filename}'}
+                     'picture': f'{filename}'}
 
         path = create_path(directory=f'{UPLOAD_FOLDER}/{user_id}')
         if path == 200:
