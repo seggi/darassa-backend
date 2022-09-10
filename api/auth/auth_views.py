@@ -71,12 +71,12 @@ def login():
 
         # Send SMS
         message = "Thank you for sign up to DARASSA APP"
-        send_bulk_sms(data['phone'], message)
+        # send_bulk_sms(data['phone'], message)
         user_data.create()
         return response_with(resp.SUCCESS_200)
 
     except Exception as e:
-        print(e)
+        print(e, "====")
         return response_with(resp.INVALID_INPUT_422)
 
 # Verification token
@@ -128,7 +128,6 @@ def sign_in_user():
             return response_with(resp.BAD_REQUEST_400)
         if User.verify_hash(data['password'], current_user.password):
             user = User.query.filter_by(email=data['email']).first()
-
             access_token = create_access_token(
                 identity={"id": user.id, "email": data["email"]})
             access_fresh_token = create_refresh_token(
@@ -147,4 +146,5 @@ def sign_in_user():
             return response_with(resp.UNAUTHORIZED_403)
 
     except Exception as e:
+        print(e)
         return response_with(resp.INVALID_INPUT_422)

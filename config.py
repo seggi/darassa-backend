@@ -6,7 +6,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string'
-    SQLAKCHEMY_COMMIT_ON_TEARDOWN = True
+    SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SECURITY_PASSWORD_SALT = os.getenv('SECURITY_PASSWORD_SALT')
     BCRYPT_LOG_ROUNDS = 13
     WTF_CSRF_ENABLED = True
