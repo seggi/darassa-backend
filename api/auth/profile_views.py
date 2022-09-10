@@ -1,10 +1,11 @@
 import os
+import re
 from flask import jsonify, Blueprint
-from flask import request
+from flask import request, send_from_directory
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from werkzeug.utils import secure_filename
 from api.cors.path import create_path
-from api.database.model_marsh import UserSchema
+from api.database.model_marsh import UserProfileSchema, UserSchema
 
 from api.database.models import User, UserProfile
 from api.utils.constants.default import ALLOWED_EXTENSIONS, UPLOAD_FOLDER
@@ -17,6 +18,7 @@ from api.utils import responses as resp
 profile_view = Blueprint("profile_view", __name__,
                          url_prefix="/api/user")
 user_schema = UserSchema()
+user_profile_schema = UserProfileSchema()
 
 
 @profile_view.post('/profile')
@@ -129,3 +131,36 @@ def upload_profile_image():
         })
         resp.status_code = 400
         return resp
+
+
+@profile_view.post('/get-profile')
+@jwt_required(refresh=True)
+def get_profile():
+    user_id = get_jwt_identity()['id']
+    profile_data = []
+    role = User.query.filter_by(id=user_id).first()
+
+    if user_schema.dump(role)['is_school'] == True:
+        user_profile = db.session.query(User.username, User.name, UserProfile.picture).\
+            join(User, UserProfile.user_id == User.id).\
+            filter(User.id == user_id).all()
+
+        for profile in user_profile:
+            profile_data.append(
+                {**user_profile_schema.dump(profile), **user_schema.dump(profile)})
+
+    resp = jsonify(data=profile_data)
+    resp.status_code = 201
+    return resp
+
+
+@profile_view.get('/get-picture/<path:image_name>')
+@jwt_required(refresh=True)
+def get_picture(image_name):
+    user_id = get_jwt_identity()['id']
+    folder_path = f"{UPLOAD_FOLDER}/{user_id}"
+    try:
+        basedir = os.path.join(os.path.realpath(folder_path))
+        return send_from_directory(basedir, image_name, as_attachment=True)
+    except FileNotFoundError:
+        os.abort(404)
