@@ -169,6 +169,16 @@ class UserProfile(db.Model):
     updated_at = Column(DateTime(timezone=True), default=func.now())
 
 
+class AdminAddEmployee(db.Model):
+    __tablename__ = "add_employee"
+    id = Column('id', Integer, primary_key=True)
+    school_id = Column(Integer, ForeignKey('users.id'), nullable=True)
+    employee_id = Column(Integer, ForeignKey('users.id'), nullable=True)
+    login_status = Column(Boolean(), default=False)
+    created_at = Column(DateTime(timezone=True), default=func.now())
+    updated_at = Column(DateTime(timezone=True), default=func.now())
+
+
 class UserDefaultCurrency(db.Model):
     __tablename__ = "user_default_currency"
     id = Column('id', Integer, primary_key=True)

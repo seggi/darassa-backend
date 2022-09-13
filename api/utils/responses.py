@@ -71,12 +71,12 @@ def response_with(response, value=None, message=None, error=None, headers={}, pa
 
     if response.get('message', None) is not None:
         result.update({'message': response['message']})
-    
+
     result.update({'code': response['code']})
 
     if error is not None:
         result.update({'errors': error})
-    
+
     if pagination is not None:
         result.update({'pagination': pagination})
 
@@ -84,3 +84,26 @@ def response_with(response, value=None, message=None, error=None, headers={}, pa
     headers.update({'server': 'Flask REST API'})
 
     return make_response(jsonify(result), response['http_code'], headers)
+
+
+class Response():
+    @staticmethod
+    def created(message=None,):
+        resp = jsonify({"message": message})
+        resp.status_code = 201
+        return resp
+
+    def success(message=None):
+        resp = jsonify({"message": message})
+        resp.status_code = 200
+        return resp
+
+    def failed(message=None):
+        resp = jsonify({"message": message})
+        resp.status_code = 400
+        return resp
+
+    def page_not_found(message=None):
+        resp = jsonify({"message": message})
+        resp.status_code = 404
+        return resp
