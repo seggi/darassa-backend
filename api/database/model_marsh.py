@@ -4,7 +4,7 @@ from .. import db
 from .. import marsh
 
 from .models import (
-    BussAttendance, BussSubscription,
+    AdminAddEmployee, BussAttendance, BussSubscription,
     CashReport, ChatImageContent, ChatMessageContent,
     ChatVideoContent, Cities, ClassModules,
     Classes, Country, Currency, State,
@@ -79,6 +79,15 @@ class UserSchema(marsh.SQLAlchemyAutoSchema):
 class UserProfileSchema(marsh.SQLAlchemyAutoSchema):
     class Meta:
         model = UserProfile
+        sqla_session = db.session
+        include_relationships = True
+        load_instance = True
+        include_fk = True
+
+
+class AdminAddEmployeeSchema(marsh.SQLAlchemyAutoSchema):
+    class Meta:
+        model = AdminAddEmployee
         sqla_session = db.session
         include_relationships = True
         load_instance = True
