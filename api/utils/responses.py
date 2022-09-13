@@ -88,18 +88,18 @@ def response_with(response, value=None, message=None, error=None, headers={}, pa
 
 class Response():
     @staticmethod
-    def created(message=None,):
+    def created(message=None, data=None):
         resp = jsonify({"message": message})
         resp.status_code = 201
         return resp
 
-    def success(message=None):
-        resp = jsonify({"message": message})
+    def success(message=None, data=None):
+        resp = jsonify({"message": message, "data": data})
         resp.status_code = 200
         return resp
 
     def failed(message=None):
-        resp = jsonify({"message": message})
+        resp = jsonify({"message": message, })
         resp.status_code = 400
         return resp
 

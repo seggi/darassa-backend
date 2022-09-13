@@ -48,8 +48,42 @@ def create_employee_account():
         db.session.add(add_employee)
         db.session.commit()
 
+        add_employee = UserProfile(**{
+            "user_id": new_user.id,
+        })
+        db.session.add(add_employee)
+        db.session.commit()
+
         return Response.created(message="User created.")
 
     except Exception as e:
         print(e, ",,,,")
         return response_with(resp.INVALID_INPUT_422)
+
+
+@admin_view.get('/retrieve-employee')
+@jwt_required(refresh=True)
+def retrieve_employees():
+    school_id = get_jwt_identity()['id']
+    employee_list = []
+    try:
+        employees = db.session.query(
+            User.first_name, User.last_name,
+            User.id, User.email, User.birth_date,
+            UserProfile.picture,
+            AdminAddEmployee).\
+            join(User, AdminAddEmployee.employee_id == User.id).\
+            join(UserProfile, User.id == UserProfile.user_id).\
+            filter(AdminAddEmployee.school_id == school_id).all()
+
+        for employee in employees:
+            employee_list.append({
+                **user_schema.dump(employee),
+                **user_profile_schema.dump(employee)
+            })
+
+        return Response.success(message="Success", data=employee_list)
+
+    except Exception as e:
+        print(e)
+        return response_with(resp.SERVER_ERROR_500)
