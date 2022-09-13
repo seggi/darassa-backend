@@ -57,7 +57,6 @@ def create_employee_account():
         return Response.created(message="User created.")
 
     except Exception as e:
-        print(e, ",,,,")
         return response_with(resp.INVALID_INPUT_422)
 
 
