@@ -48,10 +48,12 @@ def create_app(config_name) -> any:
     from .auth.profile_views import profile_view as profile_blueprint
     from .admin.create_employee_account import admin_view as admin_blueprint
     from .admin.students.manage_student import manage_student as manage_student_blueprint
+    from .admin.default.setup_static_info import setup_static_info as setup_info_blueprint
 
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(profile_blueprint)
     app.register_blueprint(admin_blueprint)
     app.register_blueprint(manage_student_blueprint)
+    app.register_blueprint(setup_info_blueprint)
 
     return app

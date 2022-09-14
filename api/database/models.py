@@ -198,6 +198,8 @@ class Classes(db.Model):
     __tablename__ = 'classes'
     id = Column('id', Integer, primary_key=True)
     school_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    level_id = Column(Integer, ForeignKey("school_levels.id"), nullable=True)
+    name = Column(String(200), nullable=True)
     created_at = Column(DateTime(timezone=True), default=func.now())
     updated_at = Column(DateTime(timezone=True), default=func.now())
 
