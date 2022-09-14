@@ -157,6 +157,7 @@ def sign_in_user():
         if data['email']:
             current_user = User.find_by_email(data['email'])
             user_info = user_schema.dump(current_user)
+
             if user_info['is_employee'] == True:
                 check_status = db.session.query(AdminAddEmployee).filter(
                     AdminAddEmployee.employee_id == user_info['id']).first()
@@ -167,24 +168,27 @@ def sign_in_user():
 
         if not current_user:
             return response_with(resp.SERVER_ERROR_404)
+
         if current_user and not current_user.confirmed:
-            print("::")
             return response_with(resp.BAD_REQUEST_400)
+
         if User.verify_hash(data['password'], current_user.password):
             user = User.query.filter_by(email=data['email']).first()
             access_token = create_access_token(
                 identity={"id": user.id, "email": data["email"]})
             access_fresh_token = create_refresh_token(
                 identity={"id": user.id, "email": data["email"]})
-            return response_with(resp.SUCCESS_201, value={'message': f'{current_user.username}',
-                                                          "access_token": access_token,
-                                                          "access_fresh_token": access_fresh_token,
-                                                          "data": {
-                                                              "username": user.username,
-                                                              "status": user.status,
-                                                              "user_id": user.id
-                                                          }
-                                                          }
+
+            return response_with(resp.
+                                 SUCCESS_201, value={'message': f'{current_user.username}',
+                                                     "access_token": access_token,
+                                                     "access_fresh_token": access_fresh_token,
+                                                     "data": {
+                                                         "username": user.username,
+                                                         "status": user.status,
+                                                         "user_id": user.id
+                                                     }
+                                                     }
                                  )
         else:
             return response_with(resp.UNAUTHORIZED_403)
