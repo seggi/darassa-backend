@@ -52,6 +52,34 @@ def register_student():
         return response_with(resp.INVALID_INPUT_422)
 
 
+@manage_student.put('/update-student/<int:student_id>')
+@jwt_required(refresh=True)
+def update_student(student_id):
+    try:
+        request_data = request.json
+
+        if request_data['first_name'] is None or request_data['last_name'] is None or \
+                request_data['birth_date'] is None:
+            return response_with(resp.INVALID_INPUT_422)
+
+        new_data = {
+            "first_name": request_data['first_name'],
+            "last_name": request_data["last_name"],
+            "birth_date": request_data["birth_date"],
+            "picture": request_data["picture"],
+            "birth_country": request_data["birth_country"],
+            "birth_city_village": request_data["birth_city_village"],
+            "is_current_student": request_data["status"],
+        }
+        Students.query.filter_by(id=student_id).update(new_data)
+        db.session.commit()
+
+        return Response.created(message="Student Updated with success.")
+
+    except Exception as e:
+        return response_with(resp.INVALID_INPUT_422)
+
+
 @manage_student.get('/retrieve-student')
 @jwt_required(refresh=True)
 def retrieve_student():
