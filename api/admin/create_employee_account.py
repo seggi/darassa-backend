@@ -2,7 +2,6 @@ from flask import Blueprint
 from flask import request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from api.database.model_marsh import UserProfileSchema, UserSchema
-
 from api.database.models import AdminAddEmployee, User, UserProfile
 
 from .. import db
@@ -37,6 +36,7 @@ def create_employee_account():
             "email": request_data['email'],
             "is_employee": True
         }
+
         new_user = User(**new_request_data)
         db.session.add(new_user)
         db.session.commit()
