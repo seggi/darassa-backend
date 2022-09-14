@@ -2,8 +2,8 @@ from this import s
 from flask import Blueprint
 from flask import request
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from api.database.model_marsh import StudentAddressSchema, StudentsSchema, UserSchema
-from api.database.models import StudentAddress, Students, User
+from api.database.model_marsh import StudentAddressSchema, StudentParentSchema, StudentsSchema, UserSchema
+from api.database.models import StudentAddress, StudentParent, Students, User
 
 from ... import db
 from api.utils.responses import Response, response_with
@@ -15,6 +15,7 @@ manage_student = Blueprint("manage_student", __name__,
 user_schema = UserSchema()
 student_schema = StudentsSchema()
 student_address_schema = StudentAddressSchema()
+student_parent_schema = StudentParentSchema()
 
 
 @manage_student.post('/register-student')
@@ -92,14 +93,18 @@ def retrieve_student():
             Students.first_name, Students.last_name,
             StudentAddress.country, StudentAddress.state, StudentAddress.city,
             StudentAddress.street, Students.birth_country, Students.birth_city_village,
+            StudentParent.father_full_name, StudentParent.mother_full_name,
+            StudentParent.email, StudentParent.phone,
             Students.birth_date, Students.id, Students.picture).\
             join(Students, StudentAddress.student_id == Students.id).\
+            join(StudentParent, Students.id == StudentParent.student_id).\
             filter(Students.school_id == school_id).all()
 
         for student in students:
             student_data.append({
                 **student_schema.dump(student),
-                **student_address_schema.dump(student)
+                **{"student_address": student_address_schema.dump(student)},
+                **{"student_parent_info": student_parent_schema.dump(student)},
             },)
 
         return Response.success(message="Success", data=student_data)
@@ -133,6 +138,37 @@ def add_student_address(student_id):
         db.session.commit()
 
         return Response.created(message="Student address added with success")
+
+    except Exception as e:
+        print(e)
+        return response_with(resp.INVALID_INPUT_422)
+
+
+@manage_student.post('/add-student-parent-info/<int:student_id>')
+@jwt_required(refresh=True)
+def add_student_parent(student_id):
+    try:
+        request_data = request.json
+
+        new_data = {
+            "student_id": student_id,
+            "father_full_name": request_data["father_full_name"],
+            "mother_full_name": request_data["mother_full_name"],
+            "email": request_data["email"],
+            "phone": request_data["phone"]
+        }
+
+        student = db.session.query(StudentParent).filter(
+            StudentParent.student_id == student_id).first()
+
+        if student:
+            return Response.success(message="Student parent info already added.")
+
+        student_parent_info = StudentParent(**new_data)
+        db.session.add(student_parent_info)
+        db.session.commit()
+
+        return Response.created(message="Student parent info added with success.")
 
     except Exception as e:
         print(e)
