@@ -11,6 +11,7 @@ click==8.0.3
 config==0.5.1
 firebase-admin==5.2.0
 Flask==2.0.2
+Flask-Cors==3.0.10
 flask-heroku==0.1.9
 Flask-JWT-Extended==4.3.0
 Flask-Mail==0.9.1
@@ -43,7 +44,9 @@ MarkupSafe==2.0.1
 marshmallow==3.14.1
 marshmallow-sqlalchemy==0.26.1
 msgpack==1.0.3
+numpy==1.23.2
 packaging==21.3
+pandas==1.4.2
 passlib==1.7.4
 proto-plus==1.19.9
 protobuf==3.19.4
@@ -54,7 +57,9 @@ pycodestyle==2.8.0
 PyJWT==2.2.0
 pyparsing==3.0.7
 pyrsistent==0.18.1
+python-dateutil==2.8.2
 python-decouple==3.5
+python-dotenv==0.21.0
 pytz==2021.3
 requests==2.26.0
 rsa==4.8
@@ -66,4 +71,3 @@ twilio==7.1.0
 uritemplate==4.1.1
 urllib3==1.26.7
 Werkzeug==2.0.2
-pandas==1.4.2

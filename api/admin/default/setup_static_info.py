@@ -2,9 +2,8 @@ from this import s
 from flask import Blueprint
 from flask import request
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from api.database.model_marsh import ClassesSchema, StudentAddressSchema, StudentParentSchema, StudentsSchema, UserSchema
-from api.database.models import Classes, StudentAddress, StudentParent, Students, User
-
+from api.database.model_marsh import ClassesSchema
+from api.database.models import Classes
 from ... import db
 from api.utils.responses import Response, response_with
 from api.utils import responses as resp

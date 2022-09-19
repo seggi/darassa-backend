@@ -5,6 +5,7 @@ from flask.cli import FlaskGroup
 from flask_migrate import Migrate
 from api import create_app, db
 from api.database.models import *
+from api.cors.convert_json_file import convert_currencies_json_file as currencies
 
 app = create_app(os.getenv('FLASK_ENV') or 'production')
 
@@ -26,9 +27,15 @@ def drop_db():
 
 @cli.command('seed_db')
 def seed_db():
-    request_status = ["sent", "accepted", "rejected", "expired"]
-    budget_options = ["Icommes", "Expenses"]
-    rent_payment_option = ["Month", "Week", "Day", "Year"]
+    gender = [{"id": 1, "name": "F"}, {"id": 2, "name": "M"}]
+
+    for gender in gender:
+        db.session.add(Gender(name=gender["name"]))
+        db.session.commit()
+
+    for code, desc in currencies().items():
+        db.session.add(Currency(code=code, description=desc))
+        db.session.commit()
 
 
 if __name__ == "__main__":

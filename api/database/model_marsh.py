@@ -6,8 +6,8 @@ from .. import marsh
 from .models import (
     AdminAddEmployee, BussAttendance, BussSubscription,
     CashReport, ChatImageContent, ChatMessageContent,
-    ChatVideoContent, Cities, ClassModules,
-    Classes, Country, Currency, State,
+    ChatVideoContent, ClassModules,
+    Classes, Currency,
     EmployeePayment, EmployeeSalary,
     FeeType, Gender, Language, MarksEvaluation,
     ParentAddStudentSchool, ParentFollowUpChat,
@@ -16,27 +16,6 @@ from .models import (
     StudentParent, StudentPayment, Students, TeacherClasses,
     TeacherModules, User, UserDefaultCurrency, UserProfile,
     UserSpokenLanguage)
-
-
-class CitiesSchema(marsh.SQLAlchemyAutoSchema):
-    class Meta:
-        model = Cities
-        include_relationships = True
-        load_instance = True
-
-
-class StateSchema(marsh.SQLAlchemyAutoSchema):
-    class Meta:
-        model = State
-        include_relationships = True
-        load_instance = True
-
-
-class CountrySchema(marsh.SQLAlchemyAutoSchema):
-    class Meta:
-        model = Country
-        include_relationships = True
-        load_instance = True
 
 
 class LanguageSchema(marsh.SQLAlchemyAutoSchema):
