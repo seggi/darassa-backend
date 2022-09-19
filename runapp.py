@@ -30,6 +30,7 @@ class ManageInput:
             'run dev': "sudo docker-compose up dev",
             'rebuild': "sudo docker-compose up --build dev",
             'run prod': "sudo docker-compose up prod",
+            'rebuild prod': "sudo docker-compose up --build prod",
             'db': f"sudo docker-compose exec db psql --username={DB_USERNAME} --dbname={DB}",
             'clean v': "sudo docker-compose down -v",
             'clean sys': "sudo docker-compose down",

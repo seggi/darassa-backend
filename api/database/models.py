@@ -14,29 +14,6 @@ from sqlalchemy.orm import backref
 from .. import db
 
 
-class Country(db.Model):
-    __tablename__ = "country"
-    id = Column('id', Integer, primary_key=True)
-    name = Column(String(200), nullable=False)
-    created_at = Column(DateTime(timezone=True), default=func.now())
-
-
-class State(db.Model):
-    __tablename__ = "state"
-    id = Column('id', Integer, primary_key=True)
-    name = Column(String(100), nullable=False)
-    country_id = Column(Integer, ForeignKey("country.id"), nullable=False)
-    created_at = Column(DateTime(timezone=True), default=func.now())
-
-
-class Cities(db.Model):
-    __tablename__ = "cities"
-    id = Column('id', Integer, primary_key=True)
-    name = Column(String(100), nullable=False)
-    state_id = Column(Integer, ForeignKey("state.id"), nullable=False)
-    created_at = Column(DateTime(timezone=True), default=func.now())
-
-
 class Language(db.Model):
     __tablename__ = "languages"
     id = Column('id', Integer, primary_key=True)
@@ -160,10 +137,10 @@ class UserProfile(db.Model):
     id = Column('id', Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=True)
     gender = Column(String(8), nullable=True)
-    country = Column(Integer, ForeignKey("country.id"), nullable=True)
-    state = Column(Integer, ForeignKey('state.id'), nullable=True)
-    city = Column(Integer, ForeignKey('cities.id'), nullable=True)
-    street = Column(String(100), unique=False, nullable=True)
+    country = Column(String(100), nullable=True)
+    state = Column(String(200), nullable=True)
+    city = Column(String(200), nullable=True)
+    street = Column(String(100), nullable=True)
     picture = Column(Text(), nullable=True)
     created_at = Column(DateTime(timezone=True), default=func.now())
     updated_at = Column(DateTime(timezone=True), default=func.now())
