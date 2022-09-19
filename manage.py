@@ -27,6 +27,12 @@ def drop_db():
 
 @cli.command('seed_db')
 def seed_db():
+    gender = [{"id": 1, "name": "F"}, {"id": 2, "name": "M"}]
+
+    for gender in gender:
+        db.session.add(Gender(name=gender["name"]))
+        db.session.commit()
+
     for code, desc in currencies().items():
         db.session.add(Currency(code=code, description=desc))
         db.session.commit()
