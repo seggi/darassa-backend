@@ -28,6 +28,11 @@ def drop_db():
 @cli.command('seed_db')
 def seed_db():
     gender = [{"id": 1, "name": "F"}, {"id": 2, "name": "M"}]
+    school_level = [{"id": 1, "name": "Primary"}, {"id": 2, "name": "Nursery"}]
+
+    for level in school_level:
+        db.session.add(SchoolLevel(name=level["name"]))
+        db.session.commit()
 
     for gender in gender:
         db.session.add(Gender(name=gender["name"]))
