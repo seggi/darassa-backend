@@ -1,7 +1,9 @@
 from this import s
-from flask import Blueprint
+from flask import Blueprint, jsonify
 from flask import request
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from itsdangerous import json
+from api.cors.language import ManageLanguage
 from api.database.model_marsh import ClassesSchema, CurrencySchema, FeeTypeSchema, GenderSchema, LanguageSchema, ModulesSchema, PaymentCategorySchema, SalaryTypeSchema, SchoolLevelSchema
 from api.database.models import Classes, Currency, FeeType, Gender, Language, Modules, PaymentCategory, SalaryType, SchoolLevel
 from ... import db
@@ -21,9 +23,9 @@ payment_schema = PaymentCategorySchema()
 school_level_schema = SchoolLevelSchema()
 
 
-@default_data.post('/add-language')
-@jwt_required(refresh=True)
-def add_languages():
+@default_data.post('/add-language/<string:language>')
+# @jwt_required(refresh=True)
+def add_languages(language):
     try:
         request_data = request.json
 
@@ -44,7 +46,9 @@ def add_languages():
         db.session.add(languages)
         db.session.commit()
 
-        return Response.created(message="Language added with success.")
+        selected_language = ManageLanguage(
+            language, 'Language added with success.')
+        return Response.created(message=selected_language.manage_language())
 
     except Exception as e:
         print(e)
