@@ -3,7 +3,7 @@ from flask import Blueprint
 from flask import request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from api.database.model_marsh import StudentAddressSchema, StudentParentSchema, StudentsSchema, UserSchema
-from api.database.models import StudentAddress, StudentParent, Students, User
+from api.database.models import StudentAddress, StudentParent, StudentPayment, Students, User
 
 from ... import db
 from api.utils.responses import Response, response_with
@@ -169,6 +169,22 @@ def add_student_parent(student_id):
         db.session.commit()
 
         return Response.created(message="Student parent info added with success.")
+
+    except Exception as e:
+        print(e)
+        return response_with(resp.INVALID_INPUT_422)
+
+
+@manage_student.post('/student-payment/<int:student_id>')
+@jwt_required(refresh=True)
+def student_payment(student_id):
+    try:
+        request_data = request.json | {"student_id": student_id}
+        payment = StudentPayment(**request_data)
+        db.session.add(payment)
+        db.session.commit()
+
+        return Response.created(message="Amount recorded with success.")
 
     except Exception as e:
         print(e)
